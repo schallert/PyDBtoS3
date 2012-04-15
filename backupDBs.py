@@ -23,6 +23,7 @@ DB_PASS = config['mysql']['DB_PASS']
 # String to be used in mysqldump call
 user_string = '-u ' + DB_USER + ' -p' + DB_PASS
 
+# TODO: prefix the tar file with a shortname of the local server
 def tarFileHelper():
 	# Loop over databases to be backed up
 	for db in databases:
@@ -77,6 +78,8 @@ else:
 # Loop over created tar files, send them to S3
 for backup_tar in tarFileHelper():
 	key = Key(db_bucket)
+	# Prefix the tar file with the current server name, so it looks
+	# like the tar file is in a folder with the name of the server
 	key.key = server_name + '/' + os.path.basename(backup_tar)
 	key.set_contents_from_filename(backup_tar)
 	key.close()
